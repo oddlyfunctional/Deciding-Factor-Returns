@@ -1,7 +1,7 @@
 package deciodingFactorReturns.policies;
 
 import decidingFactorReturns.policies.All;
-import decidingFactorReturns.exceptions.AllCutException;
+import decidingFactorReturns.exceptions.AllPolicyException;
 import decidingFactorReturns.structures.Node;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +69,7 @@ public class AllTest extends TestCase {
             all.evaluate(cutValue, nodes);
             fail("Deveria lançar exceção");
         }catch (Exception e){
-            assertSame(e.getClass(), AllCutException.class);
+            assertSame(e.getClass(), AllPolicyException.class);
         }
     }
 }

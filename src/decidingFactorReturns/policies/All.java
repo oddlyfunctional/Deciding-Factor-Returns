@@ -1,23 +1,37 @@
 package decidingFactorReturns.policies;
 
-import decidingFactorReturns.exceptions.AllCutException;
-import decidingFactorReturns.exceptions.CutException;
-import decidingFactorReturns.structures.Node;
-import java.util.List;
+import decidingFactorReturns.exceptions.AllPolicyException;
+import decidingFactorReturns.exceptions.PolicyException;
 
 public class All extends Policy {
 
+    private float average;
+    private int i;
+
     @Override
-    public float evaluate(Float cutValue, List<Node> children) throws CutException{
-        float average = 0;
-        for(Node child : children){
-            average += child.getValue();
-        }
-        average /= children.size();
-        if(average < cutValue){
-            throw new AllCutException(cutValue, average);
-        }
+    protected void beforeIterate() {
+        average = 0;
+        i = 0;
+    }
+
+    @Override
+    protected void iterate(float childValue) {
+        average += childValue;
+        i++;
+    }
+
+    @Override
+    protected void afterIterate() {
+        average /= i;
+    }
+
+    @Override
+    protected float evaluationValue() {
         return average;
     }
 
+    @Override
+    protected PolicyException exception() {
+        return new AllPolicyException();
+    }
 }

@@ -1,23 +1,47 @@
 package decidingFactorReturns.policies;
 
-import decidingFactorReturns.exceptions.CutException;
-import decidingFactorReturns.exceptions.WorstCutException;
+import decidingFactorReturns.exceptions.PolicyException;
+import decidingFactorReturns.exceptions.WorstPolicyException;
 import decidingFactorReturns.structures.Node;
-import java.util.List;
+import decidingFactorReturns.utils.I18n;
 
 public class Worst extends Policy {
 
+    private float worst;
+
     @Override
-    public float evaluate(Float cutValue, List<Node> children) throws CutException {
-        float worst = 5;
-        for (Node child : children) {
-            if (child.getValue() < worst) {
-                worst = child.getValue();
-            }
+    protected void beforeIterate() {
+        worst = Float.POSITIVE_INFINITY;
+    }
+
+    @Override
+    protected void iterate(float childValue) {
+        if (childValue < worst) {
+            worst = childValue;
         }
-        if (worst < cutValue) {
-            throw new WorstCutException(cutValue, worst);
-        }
+    }
+
+    @Override
+    protected void afterIterate() {
+    }
+
+    @Override
+    protected float evaluationValue() {
         return worst;
+    }
+
+    @Override
+    protected PolicyException exception() {
+        return new WorstPolicyException();
+    }
+
+    @Override
+    public Node getConditionNode() {
+        throw new IllegalStateException(I18n.t("error_worst_condition"));
+    }
+
+    @Override
+    public void setConditionNode(Node condition) {
+        throw new IllegalStateException(I18n.t("error_worst_condition"));
     }
 }

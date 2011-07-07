@@ -1,6 +1,6 @@
 package decidingFactorReturns.structures;
 
-import decidingFactorReturns.exceptions.CutException;
+import decidingFactorReturns.exceptions.PolicyException;
 import java.util.ArrayList;
 import java.util.List;
 import decidingFactorReturns.policies.Policy;
@@ -47,7 +47,10 @@ public class Node {
         this.value = value;
     }
 
-    public Float getValue() throws CutException {
+    public Float getValue() throws PolicyException {
+        if (value == null){
+            value = policy.evaluate(this, children);
+        }
         throw new NotImplementedException();
     }
 
@@ -118,6 +121,10 @@ public class Node {
         this.positiveWeight = positiveWeight;
     }
 
+    public boolean isHipotesis(){
+        return children.isEmpty();
+    }
+
     private void validateValue(Float value) {
         if (value < BOTTOM_VALUE) {
             throw new IllegalArgumentException(I18n.t("error_bottom_value"));
@@ -143,5 +150,9 @@ public class Node {
         if (importance > TOP_IMPORTANCE) {
             throw new IllegalArgumentException(I18n.t("error_top_importance"));
         }
+    }
+
+    public Float getWeightedValue() {
+        return value < 0 ? value * negativeWeight : value * positiveWeight;
     }
 }

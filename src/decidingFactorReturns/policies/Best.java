@@ -1,23 +1,35 @@
 package decidingFactorReturns.policies;
 
-import decidingFactorReturns.exceptions.BestCutException;
-import decidingFactorReturns.exceptions.CutException;
-import decidingFactorReturns.structures.Node;
-import java.util.List;
+import decidingFactorReturns.exceptions.BestPolicyException;
+import decidingFactorReturns.exceptions.PolicyException;
 
 public class Best extends Policy {
 
+    private float best;
+
     @Override
-    public float evaluate(Float cutValue, List<Node> children) throws CutException {
-        float best = -5;
-        for(Node child : children){
-            if (child.getValue() > best){
-                best = child.getValue();
-            }
+    protected void beforeIterate() {
+        best = Float.NEGATIVE_INFINITY;
+    }
+
+    @Override
+    protected void iterate(float childValue) {
+        if (childValue > best) {
+            best = childValue;
         }
-        if (best < cutValue){
-            throw new BestCutException(cutValue, best);
-        }
+    }
+
+    @Override
+    protected void afterIterate() {
+    }
+
+    @Override
+    protected float evaluationValue() {
         return best;
+    }
+
+    @Override
+    protected PolicyException exception() {
+        return new BestPolicyException();
     }
 }

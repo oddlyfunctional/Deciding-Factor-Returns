@@ -1,7 +1,7 @@
 package deciodingFactorReturns.policies;
 
 import decidingFactorReturns.policies.Best;
-import decidingFactorReturns.exceptions.BestCutException;
+import decidingFactorReturns.exceptions.BestPolicyException;
 import decidingFactorReturns.structures.Node;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +69,7 @@ public class BestTest extends TestCase {
             best.evaluate(cutValue, nodes);
             fail("Deveria lançar exceção");
         } catch (Exception e) {
-            assertSame(e.getClass(), BestCutException.class);
+            assertSame(e.getClass(), BestPolicyException.class);
         }
     }
 }

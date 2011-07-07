@@ -15,6 +15,11 @@ public class I18n {
     private static Locale locale;
     private static ResourceBundle bundle;
 
+    /**
+     * Translate the message to the current locale.
+     * @param property The name of the message to be translated.
+     * @return The translated message.
+     */
     public static String t(String property) {
         if (locale == null) {
             locale = new Locale(DEFAULT_LANGUAGE, DEFAULT_COUNTRY);
@@ -25,6 +30,11 @@ public class I18n {
         return bundle.getString(property);
     }
 
+    /**
+     * Set a new locale for the application.
+     * @param language
+     * @param country
+     */
     public static void setLocale(String language, String country) {
         locale = new Locale(language, country);
     }

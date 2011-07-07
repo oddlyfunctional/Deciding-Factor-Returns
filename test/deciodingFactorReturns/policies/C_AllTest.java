@@ -1,8 +1,8 @@
 package deciodingFactorReturns.policies;
 
 import decidingFactorReturns.policies.C_All;
-import decidingFactorReturns.exceptions.AllCutException;
-import decidingFactorReturns.exceptions.ConditionCutException;
+import decidingFactorReturns.exceptions.AllPolicyException;
+import decidingFactorReturns.exceptions.InvalidConditionFactorException;
 import decidingFactorReturns.structures.Node;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +71,7 @@ public class C_AllTest extends TestCase {
             c_all.evaluate(cutValue, nodes);
             fail("Deveria lançar exceção");
         } catch (Exception e) {
-            assertSame(e.getClass(), ConditionCutException.class);
+            assertSame(e.getClass(), InvalidConditionFactorException.class);
         }
     }
 
@@ -87,7 +87,7 @@ public class C_AllTest extends TestCase {
             c_all.evaluate(cutValue, nodes);
             fail("Deveria lançar exceção");
         } catch (Exception e) {
-            assertSame(e.getClass(), ConditionCutException.class);
+            assertSame(e.getClass(), InvalidConditionFactorException.class);
         }
     }
 }
