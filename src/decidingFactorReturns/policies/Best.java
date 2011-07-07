@@ -2,13 +2,14 @@ package decidingFactorReturns.policies;
 
 import decidingFactorReturns.exceptions.BestPolicyException;
 import decidingFactorReturns.exceptions.PolicyException;
+import decidingFactorReturns.structures.Node;
 
 public class Best extends Policy {
 
     private float best;
 
     @Override
-    protected void beforeIterate() {
+    protected void initialize() {
         best = Float.NEGATIVE_INFINITY;
     }
 
@@ -20,10 +21,6 @@ public class Best extends Policy {
     }
 
     @Override
-    protected void afterIterate() {
-    }
-
-    @Override
     protected float evaluationValue() {
         return best;
     }
@@ -31,5 +28,10 @@ public class Best extends Policy {
     @Override
     protected PolicyException exception() {
         return new BestPolicyException();
+    }
+
+    @Override
+    protected boolean considerNode(Node child) {
+        return child.isValid();
     }
 }

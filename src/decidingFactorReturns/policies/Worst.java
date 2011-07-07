@@ -10,7 +10,7 @@ public class Worst extends Policy {
     private float worst;
 
     @Override
-    protected void beforeIterate() {
+    protected void initialize() {
         worst = Float.POSITIVE_INFINITY;
     }
 
@@ -19,10 +19,6 @@ public class Worst extends Policy {
         if (childValue < worst) {
             worst = childValue;
         }
-    }
-
-    @Override
-    protected void afterIterate() {
     }
 
     @Override
@@ -43,5 +39,10 @@ public class Worst extends Policy {
     @Override
     public void setConditionNode(Node condition) {
         throw new IllegalStateException(I18n.t("error_worst_condition"));
+    }
+
+    @Override
+    protected boolean considerNode(Node child) {
+        return true;
     }
 }

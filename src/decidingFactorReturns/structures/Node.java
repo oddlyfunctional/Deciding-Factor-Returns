@@ -125,6 +125,11 @@ public class Node {
         return children.isEmpty();
     }
 
+    public boolean isValid(){
+        float value = getWeightedValue();
+        return value >= minValue || value <=maxValue;
+    }
+
     private void validateValue(Float value) {
         if (value < BOTTOM_VALUE) {
             throw new IllegalArgumentException(I18n.t("error_bottom_value"));

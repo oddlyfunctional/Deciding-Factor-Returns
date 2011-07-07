@@ -6,6 +6,7 @@ package decidingFactorReturns.policies;
 
 import decidingFactorReturns.exceptions.MostPolicyException;
 import decidingFactorReturns.exceptions.PolicyException;
+import decidingFactorReturns.structures.Node;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class Most extends Policy {
     private List<Float> negatives;
 
     @Override
-    protected void beforeIterate() {
+    protected void initialize() {
         positives = new ArrayList<Float>();
         negatives = new ArrayList<Float>();
     }
@@ -31,10 +32,6 @@ public class Most extends Policy {
         } else {
             positives.add(childValue);
         }
-    }
-
-    @Override
-    protected void afterIterate() {
     }
 
     @Override
@@ -56,5 +53,10 @@ public class Most extends Policy {
     @Override
     protected PolicyException exception() {
         return new MostPolicyException();
+    }
+
+    @Override
+    protected boolean considerNode(Node child) {
+        return child.isValid();
     }
 }

@@ -18,11 +18,11 @@ public abstract class Policy {
         this.conditionNode = condition;
     }
 
-    protected abstract void beforeIterate();
+    protected abstract void initialize();
 
     protected abstract void iterate(float childValue);
 
-    protected abstract void afterIterate();
+    protected abstract boolean considerNode(Node child);
 
     protected abstract float evaluationValue();
 
@@ -33,16 +33,17 @@ public abstract class Policy {
         for (Node child : children) {
             totalImportance += child.getImportance();
         }
-        beforeIterate();
+        initialize();
         for (Node child : children) {
             if (conditionNode != null) {
                 if (isInvalid(importanceOfNode(conditionNode), parent)) {
                     throw new InvalidConditionFactorException();
                 }
             }
-            iterate(importanceOfNode(child));
+            if (considerNode(child)) {
+                iterate(importanceOfNode(child));
+            }
         }
-        afterIterate();
         if (isInvalid(evaluationValue(), parent)) {
             throw exception();
         }
@@ -50,7 +51,7 @@ public abstract class Policy {
     }
 
     private boolean isInvalid(float value, Node parent) {
-        return value >= parent.getMinValue() && value <= parent.getMaxValue();
+        return value < parent.getMinValue() || value > parent.getMaxValue();
     }
 
     private float importanceOfNode(Node child) {
