@@ -22,4 +22,8 @@ public class IncompletePolicy {
     public void setPolicy(Policy policy) {
         this.policy = policy;
     }
+
+    public boolean hasCondition() {
+        return conditionNode != null;
+    }
 }

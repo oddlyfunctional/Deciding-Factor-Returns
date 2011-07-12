@@ -31,6 +31,7 @@ public class Node {
     private Integer importance;
     private Policy policy;
     private List<Node> children;
+    private boolean hipotesis;
 
     public Node() {
         children = new ArrayList();
@@ -129,7 +130,11 @@ public class Node {
     }
 
     public boolean isHipotesis() {
-        return children.isEmpty();
+        return hipotesis;
+    }
+
+    public void setHipotesis(boolean hipotesis) {
+        this.hipotesis = hipotesis;
     }
 
     public boolean isValid() {
@@ -233,5 +238,16 @@ public class Node {
             incomplete.getChildren().add(in.readUTF());
         }
         return incomplete;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Node) {
+            return this.getName().equals(((Node) obj).getName());
+        }
+        if (obj instanceof String) {
+            return this.getName().equals(obj);
+        }
+        return false;
     }
 }

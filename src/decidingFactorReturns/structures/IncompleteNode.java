@@ -36,4 +36,18 @@ public class IncompleteNode {
     public void setPolicy(IncompletePolicy policy) {
         this.policy = policy;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof IncompleteNode) {
+            return node.equals(((IncompleteNode) obj).getNode());
+        }
+        if (obj instanceof Node) {
+            return node.equals(obj);
+        }
+        if (obj instanceof String) {
+            return node.equals(obj);
+        }
+        return false;
+    }
 }

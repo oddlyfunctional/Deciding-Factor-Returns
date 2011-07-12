@@ -30,6 +30,10 @@ public abstract class Policy {
         this.conditionNode = condition;
     }
 
+    public boolean hasCondition() {
+        return conditionNode != null;
+    }
+
     protected abstract void initialize();
 
     protected abstract void iterate(float childValue);
@@ -47,7 +51,7 @@ public abstract class Policy {
         }
         initialize();
         for (Node child : children) {
-            if (conditionNode != null) {
+            if (hasCondition()) {
                 if (isInvalid(importanceOfNode(conditionNode), parent)) {
                     throw new InvalidConditionFactorException();
                 }
