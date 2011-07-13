@@ -1,27 +1,49 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * EditNodePanel.java
- *
- * Created on Jul 12, 2011, 3:46:30 PM
- */
 package decidingFactorReturns.GUI;
 
+import decidingFactorReturns.controllers.Edit;
+import decidingFactorReturns.policies.All;
+import decidingFactorReturns.structures.Node;
 import decidingFactorReturns.utils.I18n;
 import javax.swing.SpinnerNumberModel;
 
-/**
- *
- * @author marcos
- */
 public class EditNodePanel extends javax.swing.JPanel {
 
+    private Node node;
+    private Node parent;
+    private boolean newNode;
+
     /** Creates new form EditNodePanel */
-    public EditNodePanel() {
+    public EditNodePanel(Node parent) {
+        this.parent = parent;
         initComponents();
+        if (parent == null) {
+            node = Edit.getInstance().getRoot();
+            nodeIsHipotesisCheckBox.setSelected(true);
+            nodeIsHipotesisCheckBox.setEnabled(false);
+            repaint();
+        } else {
+            node = new Node();
+        }
+
+        newNode = true;
+        MainFrame.getInstance().setTitle(I18n.t("edit_title"));
+    }
+
+    public EditNodePanel(Node node, Node parent) {
+        initComponents();
+        this.node = node;
+        this.parent = parent;
+        nodeNameTextField.setText(node.getName());
+        nodeDescriptionTextArea.setText(node.getDescription());
+        nodeMinValueSpinner.setValue(node.getMinValue());
+        nodeMaxValueSpinner.setValue(node.getMaxValue());
+        nodeNegativeWeightSpinner.setValue(node.getNegativeWeight());
+        nodePositiveWeightSpinner.setValue(node.getPositiveWeight());
+        nodeImportanceSpinner.setValue(node.getImportance());
+        nodeIsHipotesisCheckBox.setSelected(node.isHipotesis());
+
+        newNode = false;
+        MainFrame.getInstance().setTitle(I18n.t("edit_title"));
     }
 
     /** This method is called from within the constructor to
@@ -39,13 +61,13 @@ public class EditNodePanel extends javax.swing.JPanel {
         nodeNameLabel = new javax.swing.JLabel();
         nodeNameTextField = new javax.swing.JTextField();
         nodeMinValueLabel = new javax.swing.JLabel();
-        nodeMinValueSpinner = new javax.swing.JSpinner(new SpinnerNumberModel(0.0, -5.0, 5.0, 0.5));
+        nodeMinValueSpinner = new javax.swing.JSpinner(new SpinnerNumberModel(-5.0, -5.0, 5.0, 0.5));
         nodeMaxValueLabel = new javax.swing.JLabel();
-        nodeMaxValueSpinner = new javax.swing.JSpinner(new SpinnerNumberModel(0.0, -5.0, 5.0, 0.5));
+        nodeMaxValueSpinner = new javax.swing.JSpinner(new SpinnerNumberModel(5.0, -5.0, 5.0, 0.5));
         nodeNegativeWeightLabel = new javax.swing.JLabel();
         nodePositiveWeightLabel = new javax.swing.JLabel();
         nodeNegativeWeightSpinner = new javax.swing.JSpinner(new SpinnerNumberModel(-1.0, -1.0, 1.0, 0.1));
-        nodePositiveWeightSpinner1 = new javax.swing.JSpinner(new SpinnerNumberModel(1.0, -1.0, 1.0, 0.1));
+        nodePositiveWeightSpinner = new javax.swing.JSpinner(new SpinnerNumberModel(1.0, -1.0, 1.0, 0.1));
         nodeIsHipotesisCheckBox = new javax.swing.JCheckBox();
         nodeImportanceLabel = new javax.swing.JLabel();
         nodeImportanceSpinner = new javax.swing.JSpinner(new SpinnerNumberModel(50, 1, 100, 1));
@@ -73,8 +95,18 @@ public class EditNodePanel extends javax.swing.JPanel {
         nodeImportanceLabel.setText(I18n.t("node_importance"));
 
         okButton.setText(I18n.t("ok"));
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
 
         cancelButton.setText(I18n.t("cancel"));
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -83,9 +115,6 @@ public class EditNodePanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
-                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
@@ -94,11 +123,10 @@ public class EditNodePanel extends javax.swing.JPanel {
                                     .addComponent(nodeNameLabel)
                                     .addComponent(nodeDescriptionLabel)
                                     .addComponent(nodeMinValueSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(nodeNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(nodeMaxValueSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(nodeMaxValueLabel)
                                     .addComponent(nodeIsHipotesisCheckBox))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 147, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(cancelButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
@@ -108,7 +136,7 @@ public class EditNodePanel extends javax.swing.JPanel {
                                     .addComponent(nodePositiveWeightLabel)
                                     .addComponent(nodeNegativeWeightLabel)
                                     .addComponent(nodeNegativeWeightSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(nodePositiveWeightSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(nodePositiveWeightSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(nodeImportanceSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(29, 29, 29))
                             .addGroup(layout.createSequentialGroup()
@@ -117,7 +145,12 @@ public class EditNodePanel extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(12, 12, 12)
                                 .addComponent(nodeImportanceLabel)
-                                .addContainerGap(24, Short.MAX_VALUE))))))
+                                .addContainerGap(24, Short.MAX_VALUE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(nodeNameTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -145,7 +178,7 @@ public class EditNodePanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nodeMaxValueSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(nodePositiveWeightSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(nodePositiveWeightSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nodeIsHipotesisCheckBox)
@@ -159,6 +192,49 @@ public class EditNodePanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        MainFrame.getInstance().finishEditing();
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        node.setName(nodeNameTextField.getText());
+        node.setDescription(nodeDescriptionTextArea.getText());
+        if (nodeMinValueSpinner.getValue() instanceof Float) {
+            node.setMinValue((Float) nodeMinValueSpinner.getValue());
+        } else {
+            node.setMinValue(new Float((Double) nodeMinValueSpinner.getValue()));
+        }
+        if (nodeMaxValueSpinner.getValue() instanceof Float) {
+            node.setMaxValue((Float) nodeMaxValueSpinner.getValue());
+        } else {
+            node.setMaxValue(new Float((Double) nodeMaxValueSpinner.getValue()));
+        }
+        if (nodeNegativeWeightSpinner.getValue() instanceof Float) {
+            node.setNegativeWeight((Float) nodeNegativeWeightSpinner.getValue());
+        } else {
+            node.setNegativeWeight(new Float((Double) nodeNegativeWeightSpinner.getValue()));
+        }
+        if (nodePositiveWeightSpinner.getValue() instanceof Float) {
+            node.setPositiveWeight((Float) nodePositiveWeightSpinner.getValue());
+        } else {
+            node.setPositiveWeight(new Float((Double) nodePositiveWeightSpinner.getValue()));
+        }
+        node.setImportance((Integer) nodeImportanceSpinner.getValue());
+        node.setHipotesis(nodeIsHipotesisCheckBox.isSelected());
+
+        if (newNode) {
+            if (parent != null) {
+                parent.addChild(node);
+            }
+            Edit.getInstance().addNode(node);
+        }
+        if (node.isHipotesis()) {
+            node.setPolicy(new All());
+            MainFrame.getInstance().pushNode(node);
+        }
+        MainFrame.getInstance().finishEditing();
+    }//GEN-LAST:event_okButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JScrollPane jScrollPane1;
@@ -176,7 +252,7 @@ public class EditNodePanel extends javax.swing.JPanel {
     private javax.swing.JLabel nodeNegativeWeightLabel;
     private javax.swing.JSpinner nodeNegativeWeightSpinner;
     private javax.swing.JLabel nodePositiveWeightLabel;
-    private javax.swing.JSpinner nodePositiveWeightSpinner1;
+    private javax.swing.JSpinner nodePositiveWeightSpinner;
     private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
 }

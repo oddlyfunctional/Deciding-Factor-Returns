@@ -55,23 +55,24 @@ public class Edit {
             node.setHipotesis(!incompleteNode.getChildren().isEmpty());
             /* Search real children from names */
             for (String childName : incompleteNode.getChildren()) {
-                node.addChild(incompleteNodes.get(incompleteNodes.indexOf(childName)).getNode());
+                node.addChild(((IncompleteNode) find(incompleteNodes, childName)).getNode());
             }
 
-            Policy policy = incompleteNode.getPolicy().getPolicy();
-            /* Search the policy's condition node, if any */
-            if (incompleteNode.getPolicy().hasCondition()) {
-                policy.setConditionNode(incompleteNodes.get(incompleteNodes.indexOf(incompleteNode.getPolicy().getConditionNode())).getNode());
+            if (node.isHipotesis()) {
+                Policy policy = incompleteNode.getPolicy().getPolicy();
+                /* Search the policy's condition node, if any */
+                if (incompleteNode.getPolicy().hasCondition()) {
+                    policy.setConditionNode(((IncompleteNode) find(incompleteNodes, incompleteNode.getPolicy().getConditionNode())).getNode());
+                }
+
+                /* Set node policy */
+                node.setPolicy(policy);
             }
-
-            /* Set node policy */
-            node.setPolicy(policy);
-
             nodes.add(node);
         }
 
         /* Set root node */
-        root = nodes.get(nodes.indexOf(rootName));
+        root = (Node) find(nodes, rootName);
     }
 
     public void saveTree(File file) throws IOException {
@@ -97,6 +98,30 @@ public class Edit {
 
     public void newTree() {
         root = new Node();
+        root.setHipotesis(true);
         nodes = new ArrayList<Node>();
+        addNode(root);
     }
+
+    public void addNode(Node node) {
+        nodes.add(node);
+    }
+
+    public void removeNode(Node node) {
+        nodes.remove(node);
+    }
+
+    public List<Node> getNodes() {
+        return nodes;
+    }
+
+    private Object find(List list, Object name) {
+        for (Object node : list) {
+            if (node.equals(name)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
 }

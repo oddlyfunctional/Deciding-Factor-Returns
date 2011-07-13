@@ -183,7 +183,8 @@ public class Node {
      *  <li>positive weight</li>
      *  <li>negative weight</li>
      *  <li>importance</li>
-     *  <li>policy</li>
+     *  <li>if it's a hipotesis</li>
+     *  <li>policy, if hipotesis</li>
      *  <li>number of children</li>
      *  <li>children's names</li>
      * </ul>
@@ -198,10 +199,13 @@ public class Node {
         out.writeFloat(positiveWeight);
         out.writeFloat(negativeWeight);
         out.writeInt(importance);
-        policy.save(out);
-        out.writeInt(children.size());
-        for (Node child : children) {
-            out.writeUTF(child.getName());
+        out.writeBoolean(hipotesis);
+        if (hipotesis) {
+            policy.save(out);
+            out.writeInt(children.size());
+            for (Node child : children) {
+                out.writeUTF(child.getName());
+            }
         }
     }
 
@@ -215,7 +219,8 @@ public class Node {
      *  <li>positive weight</li>
      *  <li>negative weight</li>
      *  <li>importance</li>
-     *  <li>policy</li>
+     *  <li>if it's a hipotesis</li>
+     *  <li>policy, if hipotesis</li>
      *  <li>number of children</li>
      *  <li>children's names</li>
      * </ul>
@@ -229,19 +234,28 @@ public class Node {
         node.setPositiveWeight(in.readFloat());
         node.setNegativeWeight(in.readFloat());
         node.setImportance(in.readInt());
+        node.setHipotesis(in.readBoolean());
 
         IncompleteNode incomplete = new IncompleteNode();
         incomplete.setNode(node);
-        incomplete.setPolicy(Policy.load(in));
-        int childrensNumber = in.readInt();
-        for (int i = 0; i < childrensNumber; i++) {
-            incomplete.getChildren().add(in.readUTF());
+        if (node.isHipotesis()) {
+            incomplete.setPolicy(Policy.load(in));
+            int childrensNumber = in.readInt();
+            for (int i = 0; i < childrensNumber; i++) {
+                incomplete.getChildren().add(in.readUTF());
+            }
         }
         return incomplete;
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
         if (obj instanceof Node) {
             return this.getName().equals(((Node) obj).getName());
         }
@@ -249,5 +263,12 @@ public class Node {
             return this.getName().equals(obj);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + (this.name != null ? this.name.hashCode() : 0);
+        return hash;
     }
 }

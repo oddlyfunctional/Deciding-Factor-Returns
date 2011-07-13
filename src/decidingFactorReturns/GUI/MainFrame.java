@@ -1,45 +1,93 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * MainFrame.java
- *
- * Created on Jul 12, 2011, 3:32:00 PM
- */
 package decidingFactorReturns.GUI;
 
+import decidingFactorReturns.structures.Node;
+import decidingFactorReturns.utils.I18n;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.util.Stack;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-/**
- *
- * @author marcos
- */
 public class MainFrame extends javax.swing.JFrame {
 
+    private static MainFrame instance;
+
+    public static MainFrame getInstance() {
+        if (instance == null) {
+            instance = new MainFrame();
+        }
+        return instance;
+    }
     private Component activePanel;
+    private Stack<Node> showingNodes;
 
     /** Creates new form MainFrame */
     public MainFrame() {
+        showingNodes = new Stack<Node>();
         initComponents();
         this.getContentPane().setLayout(new BorderLayout());
-        changePanel(new InitialMenuPanel());
+        Dimension screenSize = getToolkit().getScreenSize();
+        this.setLocation((screenSize.width - getWidth()) / 2, (screenSize.height - getHeight()) / 2);
     }
 
-    private void changePanel(JPanel panel) {
+    public void changePanel(JPanel panel) {
         if (activePanel != null) {
             getContentPane().remove(activePanel);
         }
         activePanel = panel;
         getContentPane().add(activePanel, BorderLayout.CENTER);
-        Dimension screenSize = getToolkit().getScreenSize();
-        this.setLocation((screenSize.width - activePanel.getWidth()) / 2, (screenSize.height - activePanel.getHeight()) / 2);
         pack();
         repaint();
+    }
+
+    public void menu() {
+        showingNodes.clear();
+        changePanel(new InitialMenuPanel());
+    }
+
+    public void pushNode(Node node) {
+        if (node.isHipotesis()) {
+            showingNodes.push(node);
+        } else {
+            throw new IllegalArgumentException(I18n.t("error_node_not_hipotesis"));
+        }
+    }
+
+    public Node popNode() {
+        return showingNodes.pop();
+    }
+
+    private void viewHipotesis() {
+        if (showingNodes.empty()) {
+            if (JOptionPane.showConfirmDialog(this, I18n.t("alert_cancel_editing"), I18n.t("warning"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE)
+                    == JOptionPane.OK_OPTION) {
+                menu();
+            }
+        } else {
+            changePanel(new ViewHipotesisPanel(showingNodes.peek()));
+        }
+    }
+
+    public void upTree() {
+        popNode();
+        viewHipotesis();
+    }
+
+    public void downTree() {
+        viewHipotesis();
+    }
+
+    public void finishEditing() {
+        viewHipotesis();
+    }
+
+    public void startEditing() {
+        changePanel(new EditNodePanel(showingNodes.peek()));
+    }
+
+    public void startEditing(Node node, Node parent) {
+        changePanel(new EditNodePanel(node, parent));
     }
 
     /** This method is called from within the constructor to
@@ -74,7 +122,8 @@ public class MainFrame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new MainFrame().setVisible(true);
+                MainFrame.getInstance().setVisible(true);
+                MainFrame.getInstance().menu();
             }
         });
     }

@@ -8,10 +8,13 @@
  *
  * Created on Jul 12, 2011, 3:47:16 PM
  */
-
 package decidingFactorReturns.GUI;
 
+import decidingFactorReturns.controllers.Edit;
 import decidingFactorReturns.utils.I18n;
+import java.io.IOException;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -22,6 +25,7 @@ public class InitialMenuPanel extends javax.swing.JPanel {
     /** Creates new form InitialMenuPanel */
     public InitialMenuPanel() {
         initComponents();
+        MainFrame.getInstance().setTitle(I18n.t("menu_title"));
     }
 
     /** This method is called from within the constructor to
@@ -46,10 +50,20 @@ public class InitialMenuPanel extends javax.swing.JPanel {
         });
 
         createTreeButton.setText(I18n.t("create_tree"));
+        createTreeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createTreeButtonActionPerformed(evt);
+            }
+        });
 
         consultTreeButton.setText(I18n.t("consult_tree"));
 
         editTreeButton.setText(I18n.t("edit_tree"));
+        editTreeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editTreeButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -87,12 +101,28 @@ public class InitialMenuPanel extends javax.swing.JPanel {
         System.exit(0);
     }//GEN-LAST:event_exitButtonActionPerformed
 
+    private void createTreeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createTreeButtonActionPerformed
+        Edit.getInstance().newTree();
+        MainFrame.getInstance().changePanel(new EditNodePanel(null));
+    }//GEN-LAST:event_createTreeButtonActionPerformed
 
+    private void editTreeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editTreeButtonActionPerformed
+        JFileChooser fc = new JFileChooser();
+        if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try {
+                Edit.getInstance().loadTree(fc.getSelectedFile());
+                MainFrame.getInstance().pushNode(Edit.getInstance().getRoot());
+                MainFrame.getInstance().downTree();
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showConfirmDialog(this, I18n.t("error_io"), I18n.t("warning"), JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_editTreeButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton consultTreeButton;
     private javax.swing.JButton createTreeButton;
     private javax.swing.JButton editTreeButton;
     private javax.swing.JButton exitButton;
     // End of variables declaration//GEN-END:variables
-
 }

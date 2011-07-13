@@ -33,12 +33,11 @@ public class Worst extends Policy {
 
     @Override
     public Node getConditionNode() {
-        throw new IllegalStateException(I18n.t("error_worst_condition"));
+        return null;
     }
 
     @Override
     public void setConditionNode(Node condition) {
-        throw new IllegalStateException(I18n.t("error_worst_condition"));
     }
 
     @Override

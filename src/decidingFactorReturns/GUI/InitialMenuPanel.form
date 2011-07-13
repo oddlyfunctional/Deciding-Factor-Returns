@@ -63,6 +63,9 @@
           <Connection code="I18n.t(&quot;create_tree&quot;)" type="code"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="createTreeButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="consultTreeButton">
       <Properties>
@@ -77,6 +80,9 @@
           <Connection code="I18n.t(&quot;edit_tree&quot;)" type="code"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editTreeButtonActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

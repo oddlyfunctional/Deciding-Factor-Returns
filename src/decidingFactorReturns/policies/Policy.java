@@ -8,15 +8,16 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public abstract class Policy {
 
     /* POLICIES CODES */
-    private static final int ALL = 0;
-    private static final int BEST = 1;
-    private static final int MOST = 2;
-    private static final int WORST = 3;
+    public static final int ALL = 0;
+    public static final int BEST = 1;
+    public static final int MOST = 2;
+    public static final int WORST = 3;
+    public static final int POLICIES_CODES[] = new int[]{ALL, BEST, MOST, WORST};
+    public static final String POLICIES_NAMES[] = new String[]{"ALL", "BEST", "MOST", "WORST"};
 
     /* ATTRIBUTES */
     protected Node conditionNode;
@@ -78,7 +79,7 @@ public abstract class Policy {
         return child.getImportance() * 100 / totalImportance;
     }
 
-    private int policyCode() {
+    public int policyCode() {
         Class klass = this.getClass();
         if (klass == All.class) {
             return ALL;
@@ -105,8 +106,10 @@ public abstract class Policy {
      */
     public void save(DataOutputStream out) throws IOException {
         out.writeInt(policyCode());
-        out.writeBoolean(conditionNode != null);
-        out.writeUTF(conditionNode.getName());
+        out.writeBoolean(hasCondition());
+        if (hasCondition()) {
+            out.writeUTF(conditionNode.getName());
+        }
     }
 
     /**
@@ -119,21 +122,7 @@ public abstract class Policy {
      */
     public static IncompletePolicy load(DataInputStream in) throws IOException {
         int code = in.readInt();
-        Policy policy = null;
-        switch (code) {
-            case ALL:
-                policy = new All();
-                break;
-            case BEST:
-                policy = new Best();
-                break;
-            case MOST:
-                policy = new Most();
-                break;
-            case WORST:
-                policy = new Worst();
-                break;
-        }
+        Policy policy = createPolicy(code);
         IncompletePolicy incomplete = new IncompletePolicy();
         incomplete.setPolicy(policy);
         boolean thereIsCondition = in.readBoolean();
@@ -141,5 +130,20 @@ public abstract class Policy {
             incomplete.setConditionNode(in.readUTF());
         }
         return incomplete;
+    }
+
+    public static Policy createPolicy(int code) {
+        switch (code) {
+            case ALL:
+                return new All();
+            case BEST:
+                return new Best();
+            case MOST:
+                return new Most();
+            case WORST:
+                return new Worst();
+            default:
+                return null;
+        }
     }
 }
